@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Watcher</title>
+    <style>
+        #log {
+            white-space: pre-wrap;
+            background-color: #f4f4f4;
+            padding: 20px;
+            border: 1px solid #ccc;
+            height: 400px;
+            overflow-y: scroll;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Log Watcher</h1>
+<div id="log"></div>
+
+<script>
+    var logDiv = document.getElementById('log');
+    var socket = new WebSocket("ws://localhost:8080/log-updates");
+
+    socket.onmessage = function (event) {
+        logDiv.innerHTML += event.data + "\n";
+        logDiv.scrollTop = logDiv.scrollHeight; // Auto-scroll to bottom
+    };
+
+    socket.onopen = function () {
+        console.log("WebSocket connection established.");
+    };
+
+    socket.onclose = function () {
+        console.log("WebSocket connection closed.");
+    };
+</script>
+
+</body>
+</html>
