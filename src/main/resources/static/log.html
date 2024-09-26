@@ -1,43 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Real-Time Chat</title>
-    <script src="/webjars/stomp-websocket/2.3.4/stomp.min.js"></script>
-    <script>
-        var stompClient = null;
-        function connect() {
-            var socket = new SockJS('/websocket');
-            stompClient = Stomp.over(socket);
-            stompClient.connect({}, function (frame) {
-            console.log('Connected: ' + frame);
-            stompClient.subscribe('/topic/chat', function (message) {
-                showMessage(JSON.parse(message.body).content);
-                });
-            });
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Watcher</title>
+    <style>
+        #log {
+            white-space: pre-wrap;
+            background-color: #f4f4f4;
+            padding: 20px;
+            border: 1px solid #ccc;
+            height: 400px;
+            overflow-y: scroll;
         }
-        function disconnect() {
-            if (stompClient !== null) {
-            stompClient.disconnect();
-            }
-            console.log("Disconnected");
-        }
-        function sendMessage() {
-            var message = document.getElementById('message').value;
-            stompClient.send("/app/chat", {}, JSON.stringify({'content': message}));
-        }
-        function showMessage(message) {
-            var chatDiv = document.getElementById('chat');
-            var p = document.createElement('p');
-            p.appendChild(document.createTextNode(message));
-            chatDiv.appendChild(p);
-        }
-    </script>
+    </style>
 </head>
-<body onload="connect()">
-<h1>Real-Time Chat</h1>
-<div id="chat"></div>
-<input type="text" id="message" placeholder="Type your message"/>
-<button onclick="sendMessage()">Send</button>
-<button onclick="disconnect()">Disconnect</button>
+<body>
+
+<h1>Log Watcher</h1>
+<div id="log"></div>
+
+<script>
+    var logDiv = document.getElementById('log');
+    var socket = new WebSocket("ws://localhost:8080/log-updates");
+
+    socket.onmessage = function (event) {
+        logDiv.innerHTML += event.data + "\n";
+        logDiv.scrollTop = logDiv.scrollHeight;
+    };
+
+    socket.onopen = function () {
+        console.log("WebSocket connection established.");
+    };
+
+    socket.onclose = function () {
+        console.log("WebSocket connection closed.");
+    };
+</script>
+
 </body>
 </html>
