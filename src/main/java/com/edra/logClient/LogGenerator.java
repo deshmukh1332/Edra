@@ -19,7 +19,7 @@ public class LogGenerator {
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final int RANDOM_STRING_LENGTH = 30;
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 1000)
     public void chatPage() {
         File file = new File(LOG_FILE_PATH);
         // add random line of 30 characters in the file
@@ -35,6 +35,7 @@ public class LogGenerator {
                 logQueue.poll();
             }
             logQueue.add(line);
+            LogWebSocketHandler.sendLogToAllSessions();
             System.out.println("Added line: " + randomLine);
         } catch (IOException e) {
             e.printStackTrace();

@@ -22,15 +22,16 @@
 
 <script>
     var logDiv = document.getElementById('log');
-    var socket = new WebSocket("ws://localhost:8080/log-updates");
-
-    socket.onmessage = function (event) {
-        logDiv.innerHTML += event.data + "\n";
-        logDiv.scrollTop = logDiv.scrollHeight; // Auto-scroll to bottom
-    };
+    var socket = new WebSocket("ws://localhost:8080/logClient/log-updates");
 
     socket.onopen = function () {
         console.log("WebSocket connection established.");
+    };
+
+    socket.onmessage = function (event) {
+        console.log("Received log message: " + event.data);
+        logDiv.innerHTML += event.data + "\n";
+        logDiv.scrollTop = logDiv.scrollHeight;
     };
 
     socket.onclose = function () {
